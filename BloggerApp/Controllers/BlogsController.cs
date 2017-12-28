@@ -14,7 +14,8 @@ namespace BloggerApp.Controllers
         /// Api to Get all Blogs created ! 
         /// </summary>
         /// <returns></returns>
-        public HttpResponseMessage Get()
+        [Authorize]
+        public HttpResponseMessage GetBlogsList()
         {
             using (BloggerAppDBEntities entities = new BloggerAppDBEntities())
             {
@@ -35,7 +36,7 @@ namespace BloggerApp.Controllers
         /// </summary>
         /// <param name="id"> it specifies the BID of Blogger</param>
         /// <returns></returns>
-        public HttpResponseMessage Get(int id)
+        public HttpResponseMessage GetBlogsById(int id)
         {
             using (BloggerAppDBEntities entities = new BloggerAppDBEntities())
             {
@@ -58,7 +59,7 @@ namespace BloggerApp.Controllers
         /// </summary>
         /// <param name="blog"></param>
         /// <returns></returns>
-        public HttpResponseMessage Post([FromBody] Blog_Detail blog)
+        public HttpResponseMessage CreateBlog([FromBody] Blog_Detail blog)
         {
             try
             {
@@ -85,12 +86,12 @@ namespace BloggerApp.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public HttpResponseMessage Delete(int id)
+        public HttpResponseMessage DeleteBlogById(int bid)
         {
 
             using (BloggerAppDBEntities entity = new BloggerAppDBEntities())
             {
-                var blogToDelete = entity.Blog_Detail.FirstOrDefault(e => e.BID == id);
+                var blogToDelete = entity.Blog_Detail.FirstOrDefault(e => e.BID == bid);
                 if (blogToDelete != null)
                 {
                     entity.Blog_Detail.Remove(blogToDelete);
@@ -99,7 +100,7 @@ namespace BloggerApp.Controllers
                 }
                 else
                 {
-                    return Request.CreateResponse(HttpStatusCode.NotFound, "Blog with BID = " + id + " Not found ! ");
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "Blog with BID = " + bid + " Not found ! ");
                 }
             }
         }
@@ -109,13 +110,13 @@ namespace BloggerApp.Controllers
         /// <param name="id"></param>
         /// <param name="blog"></param>
         /// <returns></returns>
-        public HttpResponseMessage put(int id, [FromBody] Blog_Detail blog)
+        public HttpResponseMessage UpdateBlogById(int bid, [FromBody] Blog_Detail blog)
         {
             try
             {
                 using (BloggerAppDBEntities entity = new BloggerAppDBEntities())
                 {
-                    var blogToEdit = entity.Blog_Detail.FirstOrDefault(e => e.BID == id);
+                    var blogToEdit = entity.Blog_Detail.FirstOrDefault(e => e.BID == bid);
                     if (blogToEdit != null)
                     {
                         blogToEdit.Title = blog.Title;
@@ -126,7 +127,7 @@ namespace BloggerApp.Controllers
                     }
                     else
                     {
-                        return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Blog with BID = " + id + " Not found ! ");
+                        return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Blog with BID = " + bid + " Not found ! ");
                     }
                 }
 

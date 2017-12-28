@@ -11,13 +11,76 @@ namespace BloggerApp.Controllers
     public class BloggerController : ApiController
     {
         [HttpGet]
-        public HttpResponseMessage Get()
+        public HttpResponseMessage GetBlogersList()
         {
             using (BloggerAppDBEntities entities = new BloggerAppDBEntities())
             {
                 return Request.CreateResponse(HttpStatusCode.OK, entities.User_Details.ToList());
             }
         }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("api/Blogger/RegisterUser")]
+        public HttpResponseMessage RegisterUser([FromBody] User_Details newUser)
+        {
+                try
+                {
+                    using (BloggerAppDBEntities entities = new BloggerAppDBEntities())
+                    {
+                    var user = entities.User_Details.FirstOrDefault(d => d.UserName == newUser.UserName);
+                    if (user == null)
+                    {
+                        entities.User_Details.Add(newUser);
+                        entities.SaveChanges();
+                        var message = Request.CreateResponse(HttpStatusCode.Created, newUser);
+                        message.Headers.Location = new Uri(Request.RequestUri + newUser.UserName.ToString());
+                        return message;
+                    }
+                    else
+                    {
+                        var message = Request.CreateResponse(HttpStatusCode.Conflict, "User already exists!");
+                        return message;
+                    }
+
+                }   
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("api/Blogger/Login")]
+        public HttpResponseMessage Login([FromBody] LoginModel loginData )
+        {
+            try
+            {
+                using (BloggerAppDBEntities entities = new BloggerAppDBEntities())
+                {
+                    var user = entities.User_Details.FirstOrDefault(d =>( d.UserName == loginData.username && d.PWD == loginData.pwd) );
+                    if (user != null)
+                    {
+                        var message = Request.CreateResponse(HttpStatusCode.Accepted , "Logged in successfully !");
+                        return message;
+                    }
+                    else
+                    {
+                        var message = Request.CreateResponse(HttpStatusCode.Forbidden, "User does not exist!");
+                        return message;
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+
 
     }
 }
