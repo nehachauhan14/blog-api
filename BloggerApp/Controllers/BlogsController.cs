@@ -14,16 +14,19 @@ namespace BloggerApp.Controllers
         /// Api to Get all Blogs created ! 
         /// </summary>
         /// <returns></returns>
-        [Authorize]
+        
         public HttpResponseMessage GetBlogsList()
         {
             using (BloggerAppDBEntities entities = new BloggerAppDBEntities())
             {
-               
-                var entity = entities.Blog_Detail.ToList();
-                if(entity  != null)
+
+
+                //    var entity = entities.Blog_Detail.ToList();
+                //if(entity  != null)
+                var blogs = entities.Blog_Detail.OrderByDescending(x => x.DateOfUpdation).ToList();
+                if (blogs != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, entity);
+                    return Request.CreateResponse(HttpStatusCode.OK, blogs);
                 }
                else
                 {
@@ -34,8 +37,9 @@ namespace BloggerApp.Controllers
         /// <summary>
         /// To Get Blogs created by  specific Blogger 
         /// </summary>
-        /// <param name="id"> it specifies the BID of Blogger</param>
+        /// <param name="id"> it specifies the UID of Blogger</param>
         /// <returns></returns>
+        [HttpGet]
         public HttpResponseMessage GetBlogsById(int id)
         {
             using (BloggerAppDBEntities entities = new BloggerAppDBEntities())
@@ -54,11 +58,39 @@ namespace BloggerApp.Controllers
 
             }
         }
+/// <summary>
+/// 
+/// </summary>
+/// <param name="id"></param>
+/// <returns></returns>
+        [HttpGet]
+        [Route("api/Blogs/GetBlogsByBid/{bid}")]
+        public HttpResponseMessage GetBlogsByBid(int bid)
+        {
+            using (BloggerAppDBEntities entities = new BloggerAppDBEntities())
+            {
+                var blogs = entities.Blog_Detail.ToList();
+                var blogsById = blogs.Where(e => e.BID == bid).ToList();
+
+                if (blogsById != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, blogsById);
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "No blog found Present for Blogger having UID " + bid + " not found !");
+                }
+
+            }
+        }
+
+
         /// <summary>
         /// To create Blog
         /// </summary>
         /// <param name="blog"></param>
         /// <returns></returns>
+        [Authorize]
         public HttpResponseMessage CreateBlog([FromBody] Blog_Detail blog)
         {
             try
@@ -86,6 +118,8 @@ namespace BloggerApp.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [HttpDelete]
+        [Route("api/Blogs/DeleteBlogById/{bid}")]
         public HttpResponseMessage DeleteBlogById(int bid)
         {
 
@@ -109,7 +143,8 @@ namespace BloggerApp.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <param name="blog"></param>
-        /// <returns></returns>
+        [HttpPut]
+        [Route("api/Blogs/UpdateBlogById/{bid}")]
         public HttpResponseMessage UpdateBlogById(int bid, [FromBody] Blog_Detail blog)
         {
             try

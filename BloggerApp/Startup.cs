@@ -5,6 +5,7 @@ using Microsoft.Owin.Security.OAuth;
 using Owin;
 using System;
 using System.Web.Http;
+using Microsoft.Owin.Cors; 
 
 [assembly: OwinStartup(typeof(BloggerApp.Startup))]
 namespace BloggerApp
@@ -16,7 +17,10 @@ namespace BloggerApp
             HttpConfiguration config = new HttpConfiguration();
             ConfigureOAuth(app);
             WebApiConfig.Register(config);
+            app.UseCors(CorsOptions.AllowAll);
             app.UseWebApi(config);
+            
+            
         }
 
         public void ConfigureOAuth(IAppBuilder app)

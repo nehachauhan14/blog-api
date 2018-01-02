@@ -19,6 +19,11 @@ namespace BloggerApp.Controllers
             }
         }
 
+        /// <summary>
+        ///  need to change this API to handle error or duplicate Uname isssue 
+        /// </summary>
+        /// <param name="newUser"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost]
         [Route("api/Blogger/RegisterUser")]
@@ -26,7 +31,7 @@ namespace BloggerApp.Controllers
         {
                 try
                 {
-                    using (BloggerAppDBEntities entities = new BloggerAppDBEntities())
+                using (BloggerAppDBEntities entities = new BloggerAppDBEntities())
                     {
                     var user = entities.User_Details.FirstOrDefault(d => d.UserName == newUser.UserName);
                     if (user == null)
@@ -51,34 +56,34 @@ namespace BloggerApp.Controllers
             }
         }
 
-        [AllowAnonymous]
-        [HttpPost]
-        [Route("api/Blogger/Login")]
-        public HttpResponseMessage Login([FromBody] LoginModel loginData )
-        {
-            try
-            {
-                using (BloggerAppDBEntities entities = new BloggerAppDBEntities())
-                {
-                    var user = entities.User_Details.FirstOrDefault(d =>( d.UserName == loginData.username && d.PWD == loginData.pwd) );
-                    if (user != null)
-                    {
-                        var message = Request.CreateResponse(HttpStatusCode.Accepted , "Logged in successfully !");
-                        return message;
-                    }
-                    else
-                    {
-                        var message = Request.CreateResponse(HttpStatusCode.Forbidden, "User does not exist!");
-                        return message;
-                    }
+        //[AllowAnonymous]
+        //[HttpPost]
+        //[Route("api/Blogger/Login")]
+        //public HttpResponseMessage Login([FromBody] LoginModel loginData )
+        //{
+        //    try
+        //    {
+        //        using (BloggerAppDBEntities entities = new BloggerAppDBEntities())
+        //        {
+        //            var user = entities.User_Details.FirstOrDefault(d =>( d.UserName == loginData.username && d.PWD == loginData.pwd) );
+        //            if (user != null)
+        //            {
+        //                var message = Request.CreateResponse(HttpStatusCode.Accepted , "Logged in successfully !");
+        //                return message;
+        //            }
+        //            else
+        //            {
+        //                var message = Request.CreateResponse(HttpStatusCode.Forbidden, "User does not exist!");
+        //                return message;
+        //            }
 
-                }
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
-            }
-        }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+        //    }
+        //}
 
 
 

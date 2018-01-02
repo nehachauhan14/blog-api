@@ -20,6 +20,8 @@ namespace BloggerApp.Providers
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
+            context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
+
             try
             {
                 using (BloggerAppDBEntities entities = new BloggerAppDBEntities())
@@ -35,9 +37,9 @@ namespace BloggerApp.Providers
                     }
                     else
                     {
-                        context.SetError("invalid_grant", "The user name or password is incorrect.");
-                        return;
-                    }
+                            context.SetError("invalid_grant", "The user name or password is incorrect.");
+                            return;
+                     }
 
                 }
             }

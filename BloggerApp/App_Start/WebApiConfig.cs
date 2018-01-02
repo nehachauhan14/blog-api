@@ -29,7 +29,7 @@ namespace BloggerApp
             config.Formatters.JsonFormatter.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
             config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
 
-            EnableCorsAttribute cors = new EnableCorsAttribute("*", "*", "GET, POST");
+            EnableCorsAttribute cors = new EnableCorsAttribute("*", "*", "*");
             config.EnableCors(cors);
 
             //var json = config.Formatters.JsonFormatter;
