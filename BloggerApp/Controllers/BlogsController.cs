@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Web.Http;
 
 namespace BloggerApp.Controllers
@@ -14,15 +15,12 @@ namespace BloggerApp.Controllers
         /// Api to Get all Blogs created ! 
         /// </summary>
         /// <returns></returns>
-        
+        [HttpGet]
+        [Route("api/Blogs/GetBlogsList")]
         public HttpResponseMessage GetBlogsList()
         {
             using (BloggerAppDBEntities entities = new BloggerAppDBEntities())
             {
-
-
-                //    var entity = entities.Blog_Detail.ToList();
-                //if(entity  != null)
                 var blogs = entities.Blog_Detail.OrderByDescending(x => x.DateOfUpdation).ToList();
                 if (blogs != null)
                 {
@@ -40,28 +38,33 @@ namespace BloggerApp.Controllers
         /// <param name="id"> it specifies the UID of Blogger</param>
         /// <returns></returns>
         [HttpGet]
-        public HttpResponseMessage GetBlogsById(int id)
+        [Route("api/Blogs/GetBlogsById")]
+        public HttpResponseMessage GetBlogsById()
         {
             using (BloggerAppDBEntities entities = new BloggerAppDBEntities())
             {
-                var blogs = entities.Blog_Detail.ToList();   
-               var blogsById = blogs.Where(e => e.UID == id).ToList();
+                var identity = this.User.Identity as ClaimsIdentity;
+                var nonRoleClaims = identity.Claims.Where(x => x.Type != ClaimsIdentity.DefaultRoleClaimType).Select(x => new { Type = x.Type, Value = x.Value }).ToList();
+                var userName = nonRoleClaims[0].Value;
+                var uid = Int32.Parse(nonRoleClaims[1].Value);  
+                var blogs = entities.Blog_Detail.ToList();
+                var blogsById = blogs.Where(e => e.UID == uid).OrderByDescending(x => x.DateOfUpdation).ToList();
 
-                if (blogsById != null)
+                if (blogsById.Count != 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, blogsById);
                 }
                 else
                 {
-                    return Request.CreateResponse(HttpStatusCode.NotFound, "No blog found Present for Blogger having UID " + id + " not found !");
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "No blog found Present for Blogger having username " + userName + " not found !");
                 }
 
-            }
+                }
         }
 /// <summary>
-/// 
+/// This api returns the blog corresponding to bid
 /// </summary>
-/// <param name="id"></param>
+/// <param name="bid">unique id for Blog</param>
 /// <returns></returns>
         [HttpGet]
         [Route("api/Blogs/GetBlogsByBid/{bid}")]
@@ -69,6 +72,7 @@ namespace BloggerApp.Controllers
         {
             using (BloggerAppDBEntities entities = new BloggerAppDBEntities())
             {
+                
                 var blogs = entities.Blog_Detail.ToList();
                 var blogsById = blogs.Where(e => e.BID == bid).ToList();
 
@@ -88,7 +92,7 @@ namespace BloggerApp.Controllers
         /// <summary>
         /// To create Blog
         /// </summary>
-        /// <param name="blog"></param>
+        /// <param name="blog">blog object</param>
         /// <returns></returns>
         [Authorize]
         public HttpResponseMessage CreateBlog([FromBody] Blog_Detail blog)

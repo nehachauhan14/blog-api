@@ -27,10 +27,12 @@ namespace BloggerApp.Providers
                 using (BloggerAppDBEntities entities = new BloggerAppDBEntities())
                 {
                     var user = entities.User_Details.FirstOrDefault(d => (d.UserName == context.UserName && d.PWD == context.Password));
+                    string uid = user.UID.ToString(); 
                     if (user != null)
                     {
                         var identity = new ClaimsIdentity(context.Options.AuthenticationType);
                         identity.AddClaim(new Claim("sub", context.UserName));
+                        identity.AddClaim(new Claim("uid", uid));
                         identity.AddClaim(new Claim("role", "user"));
 
                         context.Validated(identity);
