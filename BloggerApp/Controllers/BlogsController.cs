@@ -37,8 +37,10 @@ namespace BloggerApp.Controllers
         /// </summary>
         /// <param name="id"> it specifies the UID of Blogger</param>
         /// <returns></returns>
+
         [HttpGet]
         [Route("api/Blogs/GetBlogsById")]
+        [Authorize]
         public HttpResponseMessage GetBlogsById()
         {
             using (BloggerAppDBEntities entities = new BloggerAppDBEntities())
@@ -50,13 +52,13 @@ namespace BloggerApp.Controllers
                 var blogs = entities.Blog_Detail.ToList();
                 var blogsById = blogs.Where(e => e.UID == uid).OrderByDescending(x => x.DateOfUpdation).ToList();
 
-                if (blogsById.Count != 0)
+                if (blogsById != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, blogsById);
                 }
                 else
                 {
-                    return Request.CreateResponse(HttpStatusCode.NotFound, "No blog found Present for Blogger having username " + userName + " not found !");
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "No blogs found for Blogger having username : " + userName );
                 }
 
                 }
@@ -97,6 +99,10 @@ namespace BloggerApp.Controllers
         [Authorize]
         public HttpResponseMessage CreateBlog([FromBody] Blog_Detail blog)
         {
+            var identity = this.User.Identity as ClaimsIdentity;
+            var nonRoleClaims = identity.Claims.Where(x => x.Type != ClaimsIdentity.DefaultRoleClaimType).Select(x => new { Type = x.Type, Value = x.Value }).ToList();
+            var uid = Int32.Parse(nonRoleClaims[1].Value);
+            blog.UID = uid; 
             try
             {
                 using (BloggerAppDBEntities entities = new BloggerAppDBEntities())
@@ -177,5 +183,32 @@ namespace BloggerApp.Controllers
             }
         }
 
+        [HttpGet]
+        public HttpResponseMessage GetBlogsByFilter(string filter)
+        {
+            using (BloggerAppDBEntities entities = new BloggerAppDBEntities())
+            {
+                if (filter == "All")
+                {
+                    var blogs = entities.Blog_Detail.OrderByDescending(x => x.DateOfUpdation).ToList();
+                    return Request.CreateResponse(HttpStatusCode.OK, blogs);
+                }
+                else
+                {
+                    var userId = entities.User_Details.Where(x => x.UserName == filter).FirstOrDefault().UID;
+
+                    var blogs = entities.Blog_Detail.Where(x => x.UID == userId).OrderByDescending(x => x.DateOfUpdation).ToList();
+                    if (blogs != null)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, blogs);
+                    }
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.NotFound, "No blog found for Blogger " + filter);
+                    }
+                }
+            }
+
+        }
     }
 }

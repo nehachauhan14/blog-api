@@ -47,7 +47,7 @@ namespace BloggerApp.Providers
             }
             catch (Exception ex)
             {
-                context.SetError("invalid_grant", ex.Message);
+                context.SetError("invalid_grant", "The user name or password is incorrect.");
                 return;
             }
 

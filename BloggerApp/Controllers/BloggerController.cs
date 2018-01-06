@@ -55,35 +55,8 @@ namespace BloggerApp.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
         }
+ 
 
-        //[AllowAnonymous]
-        //[HttpPost]
-        //[Route("api/Blogger/Login")]
-        //public HttpResponseMessage Login([FromBody] LoginModel loginData )
-        //{
-        //    try
-        //    {
-        //        using (BloggerAppDBEntities entities = new BloggerAppDBEntities())
-        //        {
-        //            var user = entities.User_Details.FirstOrDefault(d =>( d.UserName == loginData.username && d.PWD == loginData.pwd) );
-        //            if (user != null)
-        //            {
-        //                var message = Request.CreateResponse(HttpStatusCode.Accepted , "Logged in successfully !");
-        //                return message;
-        //            }
-        //            else
-        //            {
-        //                var message = Request.CreateResponse(HttpStatusCode.Forbidden, "User does not exist!");
-        //                return message;
-        //            }
-
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
-        //    }
-        //}
 
 
 
