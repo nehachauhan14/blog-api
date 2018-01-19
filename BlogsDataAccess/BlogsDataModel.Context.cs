@@ -22,10 +22,12 @@ namespace BlogsDataAccess
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-           // throw new UnintentionalCodeFirstException();
+            throw new UnintentionalCodeFirstException();
         }
     
         public virtual DbSet<Blog_Detail> Blog_Detail { get; set; }
         public virtual DbSet<User_Details> User_Details { get; set; }
+        public virtual DbSet<reaction_info> reaction_info { get; set; }
+        public virtual DbSet<Oauth_info> Oauth_info { get; set; }
     }
 }

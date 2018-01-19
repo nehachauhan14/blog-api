@@ -73,7 +73,13 @@
       <DependentUpon>BlogsDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Class1.cs" />
+    <Compile Include="Oauth_info.cs">
+      <DependentUpon>BlogsDataModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="reaction_info.cs">
+      <DependentUpon>BlogsDataModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="User_Details.cs">
       <DependentUpon>BlogsDataModel.tt</DependentUpon>
     </Compile>
@@ -85,7 +91,9 @@
     </EntityDeploy>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.Config" />
+    <None Include="App.Config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="BlogsDataModel.edmx.diagram">
       <DependentUpon>BlogsDataModel.edmx</DependentUpon>
     </None>

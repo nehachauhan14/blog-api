@@ -18,8 +18,10 @@ namespace BlogsDataAccess
         public User_Details()
         {
             this.Blog_Detail = new HashSet<Blog_Detail>();
+            this.reaction_info = new HashSet<reaction_info>();
+            this.Oauth_info = new HashSet<Oauth_info>();
         }
-   
+    
         public int UID { get; set; }
         public string UserName { get; set; }
         public string PWD { get; set; }
@@ -27,5 +29,9 @@ namespace BlogsDataAccess
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Blog_Detail> Blog_Detail { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<reaction_info> reaction_info { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Oauth_info> Oauth_info { get; set; }
     }
 }

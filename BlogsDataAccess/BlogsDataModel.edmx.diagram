@@ -8,6 +8,13 @@
         <EntityTypeShape EntityType="BloggerAppDBModel.Blog_Detail" Width="1.5" PointX="3" PointY="0.875" IsExpanded="true" />
         <EntityTypeShape EntityType="BloggerAppDBModel.User_Details" Width="1.5" PointX="0.75" PointY="1" IsExpanded="true" />
         <AssociationConnector Association="BloggerAppDBModel.FK__Blog_Detail__UID__267ABA7A" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="BloggerAppDBModel.reaction_info" Width="1.5" PointX="5.25" PointY="1" />
+        <AssociationConnector Association="BloggerAppDBModel.FK__reaction_in__BID__37A5467C" />
+        <AssociationConnector Association="BloggerAppDBModel.FK__reaction_in__UID__36B12243" />
+        <EntityTypeShape EntityType="BloggerAppDBModel.Oauth_User_Details" Width="1.5" PointX="3" PointY="4.375" />
+        <AssociationConnector Association="BloggerAppDBModel.FK__Oauth_User___UID__3A81B327" />
+        <EntityTypeShape EntityType="BloggerAppDBModel.Oauth_info" Width="1.5" PointX="3" PointY="4.25" />
+        <AssociationConnector Association="BloggerAppDBModel.FK__Oauth_info__UID__4316F928" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

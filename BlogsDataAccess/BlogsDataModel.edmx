@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="BloggerAppDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="BloggerAppDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Blog_Detail">
           <Key>
             <PropertyRef Name="BID" />
@@ -14,6 +14,26 @@
           <Property Name="Blog_Content" Type="varchar(max)" Nullable="false" />
           <Property Name="DateOfUpdation" Type="datetime" Nullable="false" />
           <Property Name="UID" Type="int" />
+        </EntityType>
+        <EntityType Name="Oauth_info">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="oAuthID" Type="varchar(max)" Nullable="false" />
+          <Property Name="UID" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'BloggerAppDB.dbo.reaction_info' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="reaction_info">
+          <Key>
+            <PropertyRef Name="isLiked" />
+            <PropertyRef Name="DateOfUpdation" />
+          </Key>
+          <Property Name="isLiked" Type="bit" Nullable="false" />
+          <Property Name="DateOfUpdation" Type="datetime" Nullable="false" />
+          <Property Name="UID" Type="int" />
+          <Property Name="BID" Type="int" />
         </EntityType>
         <EntityType Name="User_Details">
           <Key>
@@ -36,16 +56,72 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__Oauth_info__UID__4316F928">
+          <End Role="User_Details" Type="Self.User_Details" Multiplicity="0..1" />
+          <End Role="Oauth_info" Type="Self.Oauth_info" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User_Details">
+              <PropertyRef Name="UID" />
+            </Principal>
+            <Dependent Role="Oauth_info">
+              <PropertyRef Name="UID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__reaction_in__BID__37A5467C">
+          <End Role="Blog_Detail" Type="Self.Blog_Detail" Multiplicity="0..1" />
+          <End Role="reaction_info" Type="Self.reaction_info" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Blog_Detail">
+              <PropertyRef Name="BID" />
+            </Principal>
+            <Dependent Role="reaction_info">
+              <PropertyRef Name="BID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__reaction_in__UID__36B12243">
+          <End Role="User_Details" Type="Self.User_Details" Multiplicity="0..1" />
+          <End Role="reaction_info" Type="Self.reaction_info" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User_Details">
+              <PropertyRef Name="UID" />
+            </Principal>
+            <Dependent Role="reaction_info">
+              <PropertyRef Name="UID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="BloggerAppDBModelStoreContainer">
           <EntitySet Name="Blog_Detail" EntityType="Self.Blog_Detail" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Oauth_info" EntityType="Self.Oauth_info" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User_Details" EntityType="Self.User_Details" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="reaction_info" EntityType="Self.reaction_info" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [reaction_info].[isLiked] AS [isLiked], 
+    [reaction_info].[DateOfUpdation] AS [DateOfUpdation], 
+    [reaction_info].[UID] AS [UID], 
+    [reaction_info].[BID] AS [BID]
+    FROM [dbo].[reaction_info] AS [reaction_info]</DefiningQuery>
+          </EntitySet>
           <AssociationSet Name="FK__Blog_Detail__UID__267ABA7A" Association="Self.FK__Blog_Detail__UID__267ABA7A">
             <End Role="User_Details" EntitySet="User_Details" />
             <End Role="Blog_Detail" EntitySet="Blog_Detail" />
           </AssociationSet>
+          <AssociationSet Name="FK__Oauth_info__UID__4316F928" Association="Self.FK__Oauth_info__UID__4316F928">
+            <End Role="User_Details" EntitySet="User_Details" />
+            <End Role="Oauth_info" EntitySet="Oauth_info" />
+          </AssociationSet>
+          <AssociationSet Name="FK__reaction_in__BID__37A5467C" Association="Self.FK__reaction_in__BID__37A5467C">
+            <End Role="Blog_Detail" EntitySet="Blog_Detail" />
+            <End Role="reaction_info" EntitySet="reaction_info" />
+          </AssociationSet>
+          <AssociationSet Name="FK__reaction_in__UID__36B12243" Association="Self.FK__reaction_in__UID__36B12243">
+            <End Role="User_Details" EntitySet="User_Details" />
+            <End Role="reaction_info" EntitySet="reaction_info" />
+          </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="BloggerAppDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -59,6 +135,7 @@
           <Property Name="DateOfUpdation" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="UID" Type="Int32" />
           <NavigationProperty Name="User_Details" Relationship="Self.FK__Blog_Detail__UID__267ABA7A" FromRole="Blog_Detail" ToRole="User_Details" />
+          <NavigationProperty Name="reaction_info" Relationship="BloggerAppDBModel.FK__reaction_in__BID__37A5467C" FromRole="Blog_Detail" ToRole="reaction_info" />
         </EntityType>
         <EntityType Name="User_Details">
           <Key>
@@ -69,6 +146,8 @@
           <Property Name="PWD" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="EMAIL" Type="String" MaxLength="320" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="Blog_Detail" Relationship="Self.FK__Blog_Detail__UID__267ABA7A" FromRole="User_Details" ToRole="Blog_Detail" />
+          <NavigationProperty Name="reaction_info" Relationship="BloggerAppDBModel.FK__reaction_in__UID__36B12243" FromRole="User_Details" ToRole="reaction_info" />
+          <NavigationProperty Name="Oauth_info" Relationship="BloggerAppDBModel.FK__Oauth_info__UID__4316F928" FromRole="User_Details" ToRole="Oauth_info" />
         </EntityType>
         <Association Name="FK__Blog_Detail__UID__267ABA7A">
           <End Role="User_Details" Type="Self.User_Details" Multiplicity="0..1" />
@@ -89,7 +168,78 @@
             <End Role="User_Details" EntitySet="User_Details" />
             <End Role="Blog_Detail" EntitySet="Blog_Detail" />
           </AssociationSet>
+          <EntitySet Name="reaction_info" EntityType="BloggerAppDBModel.reaction_info" />
+          <AssociationSet Name="FK__reaction_in__BID__37A5467C" Association="BloggerAppDBModel.FK__reaction_in__BID__37A5467C">
+            <End Role="Blog_Detail" EntitySet="Blog_Detail" />
+            <End Role="reaction_info" EntitySet="reaction_info" />
+          </AssociationSet>
+          <AssociationSet Name="FK__reaction_in__UID__36B12243" Association="BloggerAppDBModel.FK__reaction_in__UID__36B12243">
+            <End Role="User_Details" EntitySet="User_Details" />
+            <End Role="reaction_info" EntitySet="reaction_info" />
+          </AssociationSet>
+          <EntitySet Name="Oauth_info" EntityType="BloggerAppDBModel.Oauth_info" />
+          <AssociationSet Name="FK__Oauth_info__UID__4316F928" Association="BloggerAppDBModel.FK__Oauth_info__UID__4316F928">
+            <End Role="User_Details" EntitySet="User_Details" />
+            <End Role="Oauth_info" EntitySet="Oauth_info" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="reaction_info">
+          <Key>
+            <PropertyRef Name="isLiked" />
+            <PropertyRef Name="DateOfUpdation" />
+          </Key>
+          <Property Name="isLiked" Type="Boolean" Nullable="false" />
+          <Property Name="DateOfUpdation" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="UID" Type="Int32" />
+          <Property Name="BID" Type="Int32" />
+          <NavigationProperty Name="Blog_Detail" Relationship="BloggerAppDBModel.FK__reaction_in__BID__37A5467C" FromRole="reaction_info" ToRole="Blog_Detail" />
+          <NavigationProperty Name="User_Details" Relationship="BloggerAppDBModel.FK__reaction_in__UID__36B12243" FromRole="reaction_info" ToRole="User_Details" />
+        </EntityType>
+        <Association Name="FK__reaction_in__BID__37A5467C">
+          <End Type="BloggerAppDBModel.Blog_Detail" Role="Blog_Detail" Multiplicity="0..1" />
+          <End Type="BloggerAppDBModel.reaction_info" Role="reaction_info" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Blog_Detail">
+              <PropertyRef Name="BID" />
+            </Principal>
+            <Dependent Role="reaction_info">
+              <PropertyRef Name="BID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__reaction_in__UID__36B12243">
+          <End Type="BloggerAppDBModel.User_Details" Role="User_Details" Multiplicity="0..1" />
+          <End Type="BloggerAppDBModel.reaction_info" Role="reaction_info" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User_Details">
+              <PropertyRef Name="UID" />
+            </Principal>
+            <Dependent Role="reaction_info">
+              <PropertyRef Name="UID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Oauth_info">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="oAuthID" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="UID" Type="Int32" />
+          <NavigationProperty Name="User_Details" Relationship="BloggerAppDBModel.FK__Oauth_info__UID__4316F928" FromRole="Oauth_info" ToRole="User_Details" />
+        </EntityType>
+        <Association Name="FK__Oauth_info__UID__4316F928">
+          <End Type="BloggerAppDBModel.User_Details" Role="User_Details" Multiplicity="0..1" />
+          <End Type="BloggerAppDBModel.Oauth_info" Role="Oauth_info" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User_Details">
+              <PropertyRef Name="UID" />
+            </Principal>
+            <Dependent Role="Oauth_info">
+              <PropertyRef Name="UID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -114,6 +264,25 @@
                 <ScalarProperty Name="UserName" ColumnName="UserName" />
                 <ScalarProperty Name="PWD" ColumnName="PWD" />
                 <ScalarProperty Name="EMAIL" ColumnName="EMAIL" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="reaction_info">
+            <EntityTypeMapping TypeName="BloggerAppDBModel.reaction_info">
+              <MappingFragment StoreEntitySet="reaction_info">
+                <ScalarProperty Name="BID" ColumnName="BID" />
+                <ScalarProperty Name="UID" ColumnName="UID" />
+                <ScalarProperty Name="DateOfUpdation" ColumnName="DateOfUpdation" />
+                <ScalarProperty Name="isLiked" ColumnName="isLiked" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Oauth_info">
+            <EntityTypeMapping TypeName="BloggerAppDBModel.Oauth_info">
+              <MappingFragment StoreEntitySet="Oauth_info">
+                <ScalarProperty Name="UID" ColumnName="UID" />
+                <ScalarProperty Name="oAuthID" ColumnName="oAuthID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

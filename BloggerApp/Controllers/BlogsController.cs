@@ -21,15 +21,23 @@ namespace BloggerApp.Controllers
         {
             using (BloggerAppDBEntities entities = new BloggerAppDBEntities())
             {
-                var blogs = entities.Blog_Detail.OrderByDescending(x => x.DateOfUpdation).ToList();
-                if (blogs != null)
+                try
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, blogs);
+                    var blogs = entities.Blog_Detail.OrderByDescending(x => x.DateOfUpdation).ToList();
+                    if (blogs != null)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, blogs);
+                    }
+                    else
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "No Blog found ! ");
+                    }
                 }
-               else
+                catch (Exception ex)
                 {
-                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "No Blog found ! ");
+                    throw;
                 }
+                
             }
         }
         /// <summary>
@@ -184,31 +192,33 @@ namespace BloggerApp.Controllers
         }
 
         [HttpGet]
-        public HttpResponseMessage GetBlogsByFilter(string filter)
+        public HttpResponseMessage GetBlogsBySearch(string searchText = null)
         {
             using (BloggerAppDBEntities entities = new BloggerAppDBEntities())
             {
-                if (filter == "All")
+                searchText = (searchText != null) ? searchText.ToLower() : null;
+                var blogs = entities.Blog_Detail.OrderByDescending(x => x.DateOfUpdation).ToList();
+                if (searchText == null)
                 {
-                    var blogs = entities.Blog_Detail.OrderByDescending(x => x.DateOfUpdation).ToList();
+                    blogs = blogs.ToList();
+                }
+                else
+                {
+                    blogs = blogs.Where(x => x.Title.ToLower().Contains(searchText) || x.Blog_Content.ToLower().Contains(searchText)).ToList();
+                }
+                if (blogs.Count != 0)
+                {
                     return Request.CreateResponse(HttpStatusCode.OK, blogs);
                 }
                 else
                 {
-                    var userId = entities.User_Details.Where(x => x.UserName == filter).FirstOrDefault().UID;
-
-                    var blogs = entities.Blog_Detail.Where(x => x.UID == userId).OrderByDescending(x => x.DateOfUpdation).ToList();
-                    if (blogs != null)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK, blogs);
-                    }
-                    else
-                    {
-                        return Request.CreateResponse(HttpStatusCode.NotFound, "No blog found for Blogger " + filter);
-                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, "No blog found for search " + searchText);
                 }
             }
-
         }
+
     }
+
+
+
 }
