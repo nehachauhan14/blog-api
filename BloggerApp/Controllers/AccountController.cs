@@ -49,7 +49,13 @@ namespace BloggerApp.Controllers
                         entities.SaveChanges();
 
                     }
-        
+                    else
+                    {
+                        var externalUser = entities.User_Details.FirstOrDefault(d => d.UserName == newUser.UserName);
+                        UID = externalUser.UID;
+
+                    }
+
                     JObject token = GenerateLocalAccessTokenResponse(newUser.UserName, UID); 
 
                     var message = Request.CreateResponse(HttpStatusCode.Created, token);
@@ -68,8 +74,11 @@ namespace BloggerApp.Controllers
         {
 
             var tokenExpiration = TimeSpan.FromDays(1);
-
+            var uid = Convert.ToString(UID);
             ClaimsIdentity identity = new ClaimsIdentity(OAuthDefaults.AuthenticationType);
+
+            identity.AddClaim(new Claim("sub", userName));
+            identity.AddClaim(new Claim("uid", uid));
 
             identity.AddClaim(new Claim(ClaimTypes.Name, userName));
             identity.AddClaim(new Claim("role", "user"));

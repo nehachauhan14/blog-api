@@ -107,7 +107,7 @@ namespace BloggerApp.Controllers
         public HttpResponseMessage CreateBlog([FromBody] Blog_Detail blog)
         {
             var identity = this.User.Identity as ClaimsIdentity;
-            var nonRoleClaims = identity.Claims.Where(x => x.Type != ClaimsIdentity.DefaultRoleClaimType).Select(x => new { Type = x.Type, Value = x.Value }).ToList();
+            var nonRoleClaims = identity.Claims.Where(x => x.Type != ClaimsIdentity.DefaultRoleClaimType).Select(x => new { Type =x.Type, Value = x.Value }).ToList();
             var uid = Int32.Parse(nonRoleClaims[1].Value);
             blog.UID = uid; 
             try
@@ -162,32 +162,28 @@ namespace BloggerApp.Controllers
         /// <param name="blog"></param>
         [HttpPut]
         [Route("api/Blogs/UpdateBlogById/{bid}")]
-        public HttpResponseMessage UpdateBlogById(int bid, [FromBody] Blog_Detail blog)
+        public Blog_Detail UpdateBlogById(int bid, [FromBody] Blog_Detail blog)
         {
-            try
+
+            var result = new Blog_Detail();
+            if (blog.Title == null || blog.Blog_Content == null || (!ModelState.IsValid))
             {
-                using (BloggerAppDBEntities entity = new BloggerAppDBEntities())
-                {
-                    var blogToEdit = entity.Blog_Detail.FirstOrDefault(e => e.BID == bid);
-                    if (blogToEdit != null)
+               throw new ArgumentNullException("blog Title or content cannot be null.");
+            }
+            using (BloggerAppDBEntities entity = new BloggerAppDBEntities())
+            {
+                var blogToEdit = entity.Blog_Detail.FirstOrDefault(e => e.BID == bid);
+                if (blogToEdit != null)
                     {
                         blogToEdit.Title = blog.Title;
                         blogToEdit.Blog_Content = blog.Blog_Content;
                         blogToEdit.DateOfUpdation = DateTime.Now;
                         entity.SaveChanges();
-                        return Request.CreateResponse(HttpStatusCode.OK, blogToEdit);
+                        result = blogToEdit;
                     }
-                    else
-                    {
-                        return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Blog with BID = " + bid + " Not found ! ");
-                    }
-                }
-
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
-            }
+                   return result; 
+               
+                 }
         }
 
         [HttpGet]

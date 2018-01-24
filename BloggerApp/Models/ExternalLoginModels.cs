@@ -23,7 +23,7 @@ namespace BloggerApp.Models
             public string UserName { get; set; }
 
             [Required]
-            public int id { get; set; }
+            public long id { get; set; }
 
             [Required]
             public string email { get; set; }
