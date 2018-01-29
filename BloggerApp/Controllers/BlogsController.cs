@@ -186,6 +186,7 @@ namespace BloggerApp.Controllers
                  }
         }
 
+        
         [HttpGet]
         public HttpResponseMessage GetBlogsBySearch(string searchText = null)
         {
@@ -201,17 +202,37 @@ namespace BloggerApp.Controllers
                 {
                     blogs = blogs.Where(x => x.Title.ToLower().Contains(searchText) || x.Blog_Content.ToLower().Contains(searchText)).ToList();
                 }
-                if (blogs.Count != 0)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, blogs);
-                }
-                else
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, "No blog found for search " + searchText);
-                }
+                return Request.CreateResponse(HttpStatusCode.OK, blogs);
             }
         }
 
+        [HttpGet]
+        [Authorize]
+        [Route("api/Blogs/GetFilteredBlogsById")]
+        public HttpResponseMessage GetFilteredBlogsById(string searchText)
+        {
+            searchText = (searchText != null) ? searchText.ToLower() : null;
+
+            var identity = this.User.Identity as ClaimsIdentity;
+            var nonRoleClaims = identity.Claims.Where(x => x.Type != ClaimsIdentity.DefaultRoleClaimType).Select(x => new { Type = x.Type, Value = x.Value }).ToList();
+            var userName = nonRoleClaims[0].Value;
+            var uid = Int32.Parse(nonRoleClaims[1].Value);
+
+            using (BloggerAppDBEntities entities = new BloggerAppDBEntities())
+            {
+                var blogs = entities.Blog_Detail.Where(x => x.UID == uid).OrderByDescending(x => x.DateOfUpdation).ToList();
+
+                if (searchText == null)
+                {
+                    blogs = blogs.ToList();
+                }
+                else
+                {
+                    blogs = blogs.Where(x => x.Title.ToLower().Contains(searchText) || x.Blog_Content.ToLower().Contains(searchText)).ToList();
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, blogs);
+            }
+        }
     }
 
 
