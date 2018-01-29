@@ -13,7 +13,8 @@ namespace UnitTestBlogApp
         [TestMethod]
         public void Update_with_correct_data()
         {
-            var response = controller.UpdateBlogById(1009, GenerateRandomBlog());
+            Blog_Detail response = controller.UpdateBlogById(1009, GenerateRandomBlog());
+            Assert.AreSame(GenerateRandomBlog(), response);
         }
 
         #region Model Creator
